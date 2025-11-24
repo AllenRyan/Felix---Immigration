@@ -12,7 +12,9 @@
       "Bash(pnpm add:*)",
       "Bash(taskkill //F //PID 8008)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
     ],
     "deny": [],
     "ask": []
