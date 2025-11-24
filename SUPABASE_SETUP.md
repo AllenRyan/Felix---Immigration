@@ -6,6 +6,7 @@ This guide will walk you through setting up Supabase authentication for the Insp
 
 - A Supabase account (sign up at https://supabase.com)
 - The application codebase with Supabase dependencies installed
+- Vercel account for deployment (optional, for production)
 
 ## Step 1: Create a Supabase Project
 
