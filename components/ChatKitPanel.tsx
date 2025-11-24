@@ -295,13 +295,11 @@ export function ChatKitPanel({
 
         const raw = await response.text();
 
-        if (isDev) {
-          console.info("[ChatKitPanel] createSession response", {
-            status: response.status,
-            ok: response.ok,
-            bodyPreview: raw.slice(0, 1600),
-          });
-        }
+        console.info("[ChatKitPanel] createSession response", {
+          status: response.status,
+          ok: response.ok,
+          bodyPreview: raw.slice(0, 200),
+        });
 
         let data: Record<string, unknown> = {};
         if (raw) {
@@ -348,9 +346,13 @@ export function ChatKitPanel({
 
           initTimeoutRef.current = window.setTimeout(() => {
             if (isMountedRef.current && isInitializingSession) {
-              console.error("[ChatKitPanel] Widget initialization timeout - possible domain allowlist issue");
+              const currentOrigin = isBrowser ? window.location.origin : 'unknown';
+              console.error("[ChatKitPanel] Widget initialization timeout - possible domain allowlist issue", {
+                origin: currentOrigin,
+                workflowId,
+              });
               setErrorState({
-                integration: "ChatKit failed to initialize. Please ensure http://localhost:3000 is added to your domain allowlist at https://platform.openai.com/settings/organization/security/domain-allowlist",
+                integration: `ChatKit failed to initialize. Please ensure ${currentOrigin} is added to your domain allowlist at https://platform.openai.com/settings/organization/security/domain-allowlist`,
                 retryable: true
               });
               setIsInitializingSession(false);
