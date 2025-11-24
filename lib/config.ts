@@ -1,4 +1,4 @@
-import { ColorScheme, StartScreenPrompt, ThemeOption } from "@openai/chatkit";
+import { ColorScheme, StartScreenPrompt, ThemeOption } from "@openai/chatkit-react";
 
 export type WorkflowOption = {
   id: string;
@@ -53,17 +53,20 @@ const parseKbWorkflowOverrides = (): WorkflowOption[] => {
     "general-visa-info": process.env.NEXT_PUBLIC_CHATKIT_WORKFLOW_GENERAL_VISA_INFO,
   };
 
-  return Object.entries(envOverrides)
-    .map(([kbId, workflowId]) => {
-      const id = workflowId?.trim();
-      if (!id) return null;
-      return {
+  const results: WorkflowOption[] = [];
+
+  for (const [kbId, workflowId] of Object.entries(envOverrides)) {
+    const id = workflowId?.trim();
+    if (id) {
+      results.push({
         id,
         label: KNOWLEDGE_BASE_MAP[kbId] ?? kbId,
         knowledgeBaseId: kbId,
-      } satisfies WorkflowOption;
-    })
-    .filter((opt): opt is WorkflowOption => Boolean(opt));
+      });
+    }
+  }
+
+  return results;
 };
 
 const fallbackWorkflowId =
