@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,6 +14,38 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  // Check for invite token in URL hash (from Supabase invite email)
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash && hash.includes('access_token')) {
+      console.log('[LoginForm] Detected access token in URL hash, processing invite...')
+
+      // Extract tokens from hash
+      const params = new URLSearchParams(hash.substring(1))
+      const accessToken = params.get('access_token')
+      const refreshToken = params.get('refresh_token')
+
+      if (accessToken && refreshToken) {
+        // Set the session with the tokens
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken
+        }).then(({ data, error }) => {
+          if (error) {
+            console.error('[LoginForm] Error setting session:', error)
+            setError('Failed to process invitation. Please try again.')
+          } else if (data.session) {
+            console.log('[LoginForm] Session set successfully, redirecting to set-password')
+            // Clear the hash from URL
+            window.history.replaceState(null, '', window.location.pathname)
+            // Redirect to set password page
+            router.push('/set-password')
+          }
+        })
+      }
+    }
+  }, [supabase, router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
