@@ -5,16 +5,16 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const next = requestUrl.searchParams.get('next') ?? '/'
+  const type = requestUrl.searchParams.get('type')
 
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // Check if this is an invite (user needs to set password)
-      const { data: { user } } = await supabase.auth.getUser()
-
-      if (user?.user_metadata?.invited_role) {
+      // Check if this is an invite by looking at the 'type' parameter
+      // Supabase sends type=invite for invitation links
+      if (type === 'invite' || type === 'signup') {
         // User was invited, redirect to set-password page
         return NextResponse.redirect(new URL('/set-password', request.url))
       }
