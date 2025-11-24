@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx shadcn@latest init:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(timeout 60 bash -c 'while kill -0 $(pgrep -f \"\"shadcn.*add\"\") 2>/dev/null; do sleep 1; done')",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(taskkill //F //PID 8008)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
