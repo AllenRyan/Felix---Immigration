@@ -376,10 +376,12 @@ export function ChatKitPanel({
     [isWorkflowConfigured, setErrorState, workflowId, knowledgeBaseId]
   );
 
+  const domainKey = process.env.NEXT_PUBLIC_CHATKIT_DOMAIN_KEY;
+
   const chatkit = useChatKit({
     api: {
       getClientSecret,
-      domainKey: process.env.NEXT_PUBLIC_CHATKIT_DOMAIN_KEY,
+      ...(domainKey && { domainKey }),
     },
     theme: {
       colorScheme: theme,
