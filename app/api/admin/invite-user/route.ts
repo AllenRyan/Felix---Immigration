@@ -39,11 +39,11 @@ export async function POST(request: Request) {
     const adminClient = await createAdminClient()
 
     // Use inviteUserByEmail to send invitation email instead of auto-confirming
-    const { data: newUser, error: createError } = await adminClient.auth.admin.inviteUserByEmail(email, {
+    const { data: newUser, error: createError} = await adminClient.auth.admin.inviteUserByEmail(email, {
       data: {
         invited_role: role || 'user', // Store role in user metadata
       },
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/login`
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`
     })
 
     if (createError) {
