@@ -62,26 +62,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null)
+      try {
+        setUser(session?.user ?? null)
 
-      if (session?.user) {
-        // Fetch user profile when user logs in
-        console.log('Auth change - Fetching profile for user ID:', session.user.id)
-        const { data: profileData, error: profileError } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
+        if (session?.user) {
+          // Fetch user profile when user logs in
+          console.log('Auth change - Fetching profile for user ID:', session.user.id)
+          const { data: profileData, error: profileError } = await supabase
+            .from('user_profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single()
 
-        console.log('Auth change - Profile data:', profileData)
-        console.log('Auth change - Profile error:', profileError)
+          console.log('Auth change - Profile data:', profileData)
+          console.log('Auth change - Profile error:', profileError)
 
-        setProfile(profileData)
-      } else {
-        setProfile(null)
+          if (profileError) {
+            console.error('Failed to fetch profile:', profileError)
+          }
+
+          setProfile(profileData)
+        } else {
+          setProfile(null)
+        }
+      } catch (error) {
+        console.error('Error in auth state change handler:', error)
+      } finally {
+        setLoading(false)
       }
-
-      setLoading(false)
     })
 
     return () => {
